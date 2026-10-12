@@ -1,0 +1,55 @@
+# Local development database for the trading MCP demo.
+# Nothing in this file is deployed to Azure: in the cloud you create an Azure SQL Database in the
+# portal and run the same SQL scripts against it.
+#
+#   docker compose up -d                   start SQL Server (waits until it is healthy)
+#   docker compose run --rm db-init        create the database, run 01/02/03 SQL scripts
+#   docker compose down                    stop (data is kept in the named volume)
+#   docker compose down -v                 stop AND delete all data
+
+name: trading-mcp
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest   # check for a newer tag if you like
+    container_name: trading-sqlserver
+    # Apple Silicon: if the container won't start natively, uncomment the next line to run it
+    # under x64 emulation (slower). Check Microsoft's current guidance for ARM support.
+    # platform: linux/amd64
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer                       # free for development and testing
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD:?Copy .env.example to .env and set SA_PASSWORD}
+      MSSQL_MEMORY_LIMIT_MB: ${SQL_MEMORY_MB:-2048}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      # $$ stops Compose substituting the variable; the shell inside the container expands it.
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  # One-shot job: runs the SQL scripts, then exits. Only starts when asked (profile "init").
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest   # same image, used only for its sqlcmd tool
+    profiles: ["init"]
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD:?Copy .env.example to .env and set SA_PASSWORD}
+      MCP_READER_PASSWORD: ${MCP_READER_PASSWORD:?Copy .env.example to .env and set MCP_READER_PASSWORD}
+      DB_NAME: ${DB_NAME:-TradingDemo}
+      RECREATE: ${RECREATE:-0}
+      STAGE: ${STAGE:-3}                       # 2 = stop after 02_security.sql
+    entrypoint: ["/bin/bash", "/init/init-db.sh"]
+    volumes:
+      - ./sql:/sql:ro
+      - ./docker:/init:ro
+
+volumes:
+  sqlserver-data:

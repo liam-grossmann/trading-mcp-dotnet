@@ -1,0 +1,3 @@
+* text=auto
+# Shell scripts must keep LF line endings or they fail inside the Linux container
+*.sh text eol=lf

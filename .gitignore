@@ -1,0 +1,16 @@
+# Secrets and local config
+.env
+*.user
+appsettings.Development.json
+secrets.json
+
+# .NET build output
+bin/
+obj/
+
+# IDE
+.vs/
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+*.suo
