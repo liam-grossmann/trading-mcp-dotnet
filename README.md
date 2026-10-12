@@ -1,17 +1,17 @@
 # Secure, read-only MCP server for SQL Server (C# / .NET)
 
-Let an AI assistant query a SQL Server database **without being able to change it or any of the underlying data**. 
+System which allows an AI assistant to query a SQL Server database **without being able to change the database or any of the underlying data**. 
 - A minimal API hosts an MCP server using .NET minimal api
 - MCP server calls stored procedures via Dapper
 - Database login has been granted the least set of priviliges in order to perform its tasks
 - MCP server secured using bearer tokens (development)
-- MCP server secured using entra id (production) 
+- MCP server secured using Entra Id (production). Entra Id was formely known as Azure Active Directory.
+- Passwords and access keys stored in environment variables (not in code) 
 
 <!-- Add a short GIF of the finished demo here -->
-![VS Code Copilot calling MCP server](demo.gif)
+<!--![VS Code Copilot calling MCP server](demo.gif)-->
 
-> **All data is synthetic.** The companies, clients and prices are invented. This is a teaching project, not a
-> production-ready system. 
+> **All data is synthetic.** The companies, clients and prices are invented. The project is for educational purposes only. It is not a production-ready system.
 
 ## High Level Architecture
 
@@ -76,7 +76,7 @@ Then configure and run the server: see [docs/setup.md](docs/setup.md).
 
 ## Troubleshooting
 
-*Fill this in from your friction log: the problems you hit while building and testing.*
+Biggest issue I found was trying to get VS Code and Copilot to successfully call into the MCP server. After registering the mcp server with VS Code (using the /.vscode/mcp.jsom file) I manually started the mcp server using VS Code. This was a mistake. You only need to register the mcp server. Once you open Copilot chat, it will decide if it needs to start the mcp server or not.
 
 ## Tested with
 
@@ -87,6 +87,7 @@ Then configure and run the server: see [docs/setup.md](docs/setup.md).
 | SQL Server container | 2022-latest | *fill in* |
 | Host / model | *fill in* | *fill in* |
 
+
 The MCP SDK and its authorization support are changing quickly, so check the repo's issues for known problems.
 
 ## Licence
@@ -94,5 +95,4 @@ The MCP SDK and its authorization support are changing quickly, so check the rep
 MIT. See [LICENSE](LICENSE).
 
 ## ToDo
-
 [![build](https://github.com/Code-Express-AI/trading-mcp-dotnet/actions/workflows/build.yml/badge.svg)](https://github.com/Code-Express-AI/trading-mcp-dotnet/actions/workflows/build.yml)

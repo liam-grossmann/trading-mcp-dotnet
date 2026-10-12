@@ -27,7 +27,7 @@ builder.Services.AddSingleton<AuditService>();
 if (useEntra)
     builder.Services.AddEntraAuth(builder.Configuration);
 
-// Throttle per caller (token name, or Entra user/app identity): 120 requests / minute.
+// Rate Limiter. Throttle per caller (token name, or Entra user/app identity): 120 requests / minute.
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;

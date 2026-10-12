@@ -2,7 +2,7 @@
 
 A fully **synthetic** trading dataset and a **read-only MCP server** that exposes it to AI assistants.
 No real companies, clients or market data: company names and tickers are invented, prices are simulated
-(geometric Brownian motion), and client emails use the reserved `example.com` domain.
+(using geometric Brownian motion), and client emails use the reserved `example.com` domain.
 
 ## Layout
 
@@ -28,8 +28,11 @@ Views:  v_Positions           net holdings derived from trades
         v_PositionValuation   positions valued at the latest close (market value, unrealised P&L)
 ```
 
-Simplifications to state on camera: no FX (accounts only trade in their base currency), no market holidays,
-average-buy-price instead of tax lots/FIFO, no corporate actions.
+Note: this is a very simple trading database. No FX (accounts only trade in their base currency), no market holidays,
+average-buy-price instead of tax lots/FIFO, no corporate actions (stock splits etc). Positions are calculated from the trades table which is a big no no in the real financial world (performanace reasons, corporate actions are difficult to model, consistency of reads, etc.)
+
+OHLCV - Open, High, Low, Close, Volume.
+
 
 ## Security layers
 
